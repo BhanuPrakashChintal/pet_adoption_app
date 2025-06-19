@@ -91,11 +91,14 @@ class _HomeViewState extends State<HomeView> {
                   if (state is PetListLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is PetListLoaded) {
-                    final pets = state.pets
-                        .where((pet) => pet.name
-                            .toLowerCase()
-                            .contains(searchQuery.toLowerCase()))
-                        .toList();
+                    final pets =
+                        state.pets
+                            .where(
+                              (pet) => pet.name.toLowerCase().contains(
+                                searchQuery.toLowerCase(),
+                              ),
+                            )
+                            .toList();
                     if (pets.isEmpty) {
                       return Center(
                         child: Text(
@@ -106,8 +109,9 @@ class _HomeViewState extends State<HomeView> {
                     }
                     return LayoutBuilder(
                       builder: (context, constraints) {
-                        final crossAxisCount =
-                            _getCrossAxisCount(constraints.maxWidth);
+                        final crossAxisCount = _getCrossAxisCount(
+                          constraints.maxWidth,
+                        );
                         return SmartRefresher(
                           controller: _refreshController,
                           enablePullDown: true,
@@ -118,48 +122,56 @@ class _HomeViewState extends State<HomeView> {
                           onLoading: () {
                             context.read<PetListBloc>().loadMore();
                           },
-                          child:
-                              BlocBuilder<AdoptionCubit, Map<String, String>>(
+                          child: BlocBuilder<
+                            AdoptionCubit,
+                            Map<String, String>
+                          >(
                             builder: (context, adoptedMap) {
                               return BlocBuilder<FavoritesCubit, Set<String>>(
                                 builder: (context, favoriteIds) {
                                   return GridView.builder(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 24, vertical: 8),
+                                      horizontal: 24,
+                                      vertical: 8,
+                                    ),
                                     gridDelegate:
                                         SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: crossAxisCount,
-                                      crossAxisSpacing: 24,
-                                      mainAxisSpacing: 24,
-                                      childAspectRatio: 0.8,
-                                    ),
+                                          crossAxisCount: crossAxisCount,
+                                          crossAxisSpacing: 24,
+                                          mainAxisSpacing: 24,
+                                          childAspectRatio: 0.8,
+                                        ),
                                     itemCount: pets.length,
                                     itemBuilder: (context, index) {
                                       final pet = pets[index];
-                                      final isAdopted =
-                                          adoptedMap.containsKey(pet.id);
-                                      final isFavorite =
-                                          favoriteIds.contains(pet.id);
+                                      final isAdopted = adoptedMap.containsKey(
+                                        pet.id,
+                                      );
+                                      final isFavorite = favoriteIds.contains(
+                                        pet.id,
+                                      );
                                       return GestureDetector(
                                         onTap: () {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (_) =>
-                                                  DetailsPage(pet: pet),
+                                              builder:
+                                                  (_) => DetailsPage(pet: pet),
                                             ),
                                           );
                                         },
                                         child: Card(
                                           elevation: 4,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
                                           ),
-                                          color: isAdopted
-                                              ? theme.disabledColor
-                                                  .withOpacity(0.15)
-                                              : theme.cardColor,
+                                          color:
+                                              isAdopted
+                                                  ? theme.disabledColor
+                                                      .withOpacity(0.15)
+                                                  : theme.cardColor,
                                           child: Padding(
                                             padding: const EdgeInsets.all(12.0),
                                             child: Column(
@@ -170,7 +182,8 @@ class _HomeViewState extends State<HomeView> {
                                                   child: ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            16),
+                                                          16,
+                                                        ),
                                                     child: AspectRatio(
                                                       aspectRatio: 1,
                                                       child: Hero(
@@ -179,12 +192,15 @@ class _HomeViewState extends State<HomeView> {
                                                         child: Image.network(
                                                           pet.imageUrl,
                                                           fit: BoxFit.cover,
-                                                          errorBuilder: (context,
-                                                                  error,
-                                                                  stackTrace) =>
-                                                              const Icon(
-                                                                  Icons.pets,
-                                                                  size: 48),
+                                                          errorBuilder:
+                                                              (
+                                                                context,
+                                                                error,
+                                                                stackTrace,
+                                                              ) => const Icon(
+                                                                Icons.pets,
+                                                                size: 48,
+                                                              ),
                                                         ),
                                                       ),
                                                     ),
@@ -196,22 +212,24 @@ class _HomeViewState extends State<HomeView> {
                                                     Expanded(
                                                       child: Text(
                                                         pet.name,
-                                                        style:
-                                                            GoogleFonts.poppins(
+                                                        style: GoogleFonts.poppins(
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           fontSize: 18,
-                                                          color: isAdopted
-                                                              ? Colors.grey
-                                                              : null,
-                                                          decoration: isAdopted
-                                                              ? TextDecoration
-                                                                  .lineThrough
-                                                              : null,
+                                                          color:
+                                                              isAdopted
+                                                                  ? Colors.grey
+                                                                  : null,
+                                                          decoration:
+                                                              isAdopted
+                                                                  ? TextDecoration
+                                                                      .lineThrough
+                                                                  : null,
                                                         ),
                                                         maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
+                                                        overflow:
+                                                            TextOverflow
+                                                                .ellipsis,
                                                       ),
                                                     ),
                                                     IconButton(
@@ -220,16 +238,19 @@ class _HomeViewState extends State<HomeView> {
                                                             ? Icons.favorite
                                                             : Icons
                                                                 .favorite_border,
-                                                        color: isFavorite
-                                                            ? Colors.red
-                                                            : Colors.grey,
+                                                        color:
+                                                            isFavorite
+                                                                ? Colors.red
+                                                                : Colors.grey,
                                                       ),
                                                       onPressed: () {
                                                         context
                                                             .read<
-                                                                FavoritesCubit>()
+                                                              FavoritesCubit
+                                                            >()
                                                             .toggleFavorite(
-                                                                pet.id);
+                                                              pet.id,
+                                                            );
                                                       },
                                                     ),
                                                   ],
@@ -237,21 +258,23 @@ class _HomeViewState extends State<HomeView> {
                                                 Text(
                                                   'Age: ${pet.age} | Price: ₹${pet.price}',
                                                   style: GoogleFonts.poppins(
-                                                      fontSize: 14),
+                                                    fontSize: 14,
+                                                  ),
                                                 ),
                                                 if (isAdopted)
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.only(
-                                                            top: 6.0),
+                                                          top: 6.0,
+                                                        ),
                                                     child: Text(
                                                       'Already Adopted',
                                                       style:
                                                           GoogleFonts.poppins(
-                                                        color: Colors.grey,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
+                                                            color: Colors.grey,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
                                                       textAlign:
                                                           TextAlign.center,
                                                     ),
@@ -262,6 +285,8 @@ class _HomeViewState extends State<HomeView> {
                                         ),
                                       );
                                     },
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
                                   );
                                 },
                               );
